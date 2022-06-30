@@ -2,6 +2,11 @@ import re
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 """
 WARNING: If you just downloaded the Elliptic dataset and placed it in the data directory
@@ -59,31 +64,97 @@ def temporal_test_split(node_classes):
     The exact same split will be used other. 
     
     """
-    pass
+    # Split into X and Y
+    X = node_classes.loc[:, node_classes.columns != 'is_illicit']
+    Y = node_classes['is_illicit']
+    
+    # Create 30/70 temporal split
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size= 0.30, shuffle = False)
+    
+    return X_train, X_test, Y_train, Y_test
 
     
-def train_and_evaluate(model):
+def train(model,train_input,train_output,test_input,predict = False):
     """
     Pass in a model object
     Use default hyperparameters
     
-    Will use 10fold CV later
+    Will return a trained model
+    
     """
-    pass
+    fitted_model = model.fit(train_input,train_output)
+    
+    
+    if predict:
+        prediction = fitted_model.predict(test_input) 
+        return fitted_model, prediction
+    else:
+        return fitted_model
+    
+def evaluate(model,test_output,predicted_output):
+    """
+    Print out simple classification report for now
+    Will add more functionality later
+    
+    """
+    model_name = re.findall(r'(?<=\.)[a-zA-Z]+(?=\')',str(model.__class__))[0]
+    print(f'Printing classification report for {model_name} \n')
+    
+    print(classification_report(test_output,predicted_output))
+    
+    print("\n")
+    
     
 if __name__ == "__main__":
     
     df_classes,df_features = read_data()
 
-    df = preprocess_data(df_classes,df_features)
+    df_processed = preprocess_data(df_classes,df_features)
     
-    df = feature_engineer(df)
+    df = feature_engineer(df_processed)
     
-    # train_X,test_X,train_Y,test_Y = temporal_test_split(df)
+    X_train, X_test, Y_train, Y_test = temporal_test_split(df)
     
-    # models = []
+    models = [RandomForestClassifier()
+             ,DecisionTreeClassifier()]
     
-    # for model in models:
-    #     train_and_evaluate(model)
+    for model in models:
+        fit_model,Y_pred = train( model
+                                 ,X_train
+                                 ,Y_train
+                                 ,X_test
+                                 ,predict = True)
         
+        evaluate(fit_model
+                 ,Y_test
+                 ,Y_pred)
+        
+"""
+
+Printing classification report for RandomForestClassifier 
+
+              precision    recall  f1-score   support
+
+         0.0       0.98      1.00      0.99     13091
+         1.0       0.99      0.66      0.79       879
+
+    accuracy                           0.98     13970
+   macro avg       0.98      0.83      0.89     13970
+weighted avg       0.98      0.98      0.98     13970
+
+
+
+Printing classification report for DecisionTreeClassifier 
+
+              precision    recall  f1-score   support
+
+         0.0       0.98      0.96      0.97     13091
+         1.0       0.54      0.67      0.60       879
+
+    accuracy                           0.94     13970
+   macro avg       0.76      0.82      0.78     13970
+weighted avg       0.95      0.94      0.95     13970
+
+
+"""
     
