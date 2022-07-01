@@ -1,6 +1,8 @@
 import re
 import pandas as pd
 import numpy as np
+import xgboost as xgb
+
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
@@ -49,13 +51,18 @@ def preprocess_data(classes,features):
     
     return df
 
-def feature_engineer(node_classes):
+def feature_engineer(node_classes, save = False):
     """
     Going to apply standard normalization
     """
     # Normalize df
     transformed = MinMaxScaler().fit_transform(node_classes.values)
-    return pd.DataFrame(transformed,columns = node_classes.columns)
+    transformed_df = pd.DataFrame(transformed,columns = node_classes.columns)
+    
+    if save:
+        transformed_df.to_csv('data/normalized.csv', index = False)
+    
+    return transformed_df
     
 def temporal_test_split(node_classes):
     """
@@ -111,12 +118,13 @@ if __name__ == "__main__":
 
     df_processed = preprocess_data(df_classes,df_features)
     
-    df = feature_engineer(df_processed)
+    df = feature_engineer(df_processed, save = True)
     
     X_train, X_test, Y_train, Y_test = temporal_test_split(df)
     
     models = [RandomForestClassifier()
-             ,DecisionTreeClassifier()]
+             ,DecisionTreeClassifier()
+             ,xgb.XGBClassifier()]
     
     for model in models:
         fit_model,Y_pred = train( model
