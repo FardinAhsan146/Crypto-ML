@@ -57,7 +57,7 @@ def feature_engineer(node_classes, save = False):
     """
     # Normalize df
     transformed = MinMaxScaler().fit_transform(node_classes.values)
-    transformed_df = pd.DataFrame(transformed,columns = node_classes.columns)
+    transformed_df = pd.DataFrame(transformed,columns = node_classes.columns, index = node_classes.index)
     
     if save:
         transformed_df.to_csv('data/normalized.csv', index = False)
@@ -76,7 +76,7 @@ def temporal_test_split(node_classes):
     Y = node_classes['is_illicit']
     
     # Create 30/70 temporal split
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size= 0.30, shuffle = False)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.30, shuffle = False)
     
     return X_train, X_test, Y_train, Y_test
 
@@ -91,14 +91,13 @@ def train(model,train_input,train_output,test_input,predict = False):
     """
     fitted_model = model.fit(train_input,train_output)
     
-    
     if predict:
         prediction = fitted_model.predict(test_input) 
         return fitted_model, prediction
-    else:
-        return fitted_model
+  
+    return fitted_model
     
-def evaluate(model,test_output,predicted_output):
+def evaluate(model,test_output,predicted_output,plot = False):
     """
     Print out simple classification report for now
     Will add more functionality later
@@ -111,6 +110,10 @@ def evaluate(model,test_output,predicted_output):
     
     print("\n")
     
+    if plot:
+        pass
+        
+        
     
 if __name__ == "__main__":
     
