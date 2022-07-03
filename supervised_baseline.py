@@ -2,7 +2,9 @@ import re
 import pandas as pd
 import numpy as np
 import xgboost as xgb
+import seaborn as sns
 
+from matplotlib import pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
@@ -123,12 +125,12 @@ def plot_ts_f1(model,unp_df,test_output,predicted_output):
     
     # Seperate dfs by time steps
     ts_dict = dict()
-    
+        
+    for ts in df_ts['time_step'].unique():
+        ts_dict[ts] = df_ts.loc[df_ts['time_step'] == ts]
+        
     # Find rwos of df per time step
     ts_counts = {ts:df.shape[0] for ts,df in ts_dict.items()}
-    
-    for ts in df_ts['time_step'].unique():
-        ts_dict[ts] = df_ts.loc[df_tos['time_step'] == ts]
      
     # Pull out f1 scores
     f1_dict = dict()
@@ -136,7 +138,10 @@ def plot_ts_f1(model,unp_df,test_output,predicted_output):
     for ts,df in ts_dict.items():
         
         # compute illicit f1-score per timestamp
-        report_dict = classification_report(df['is_illicit'],df['is_illicit_pred'], output_dict = True)
+        report_dict = classification_report(df['is_illicit'],
+                                            df['is_illicit_pred'],
+                                            output_dict = True,
+                                            zero_division = 0)
         f1score = report_dict['1.0']['f1-score']
         
         # Add to dict
@@ -144,7 +149,10 @@ def plot_ts_f1(model,unp_df,test_output,predicted_output):
         
     # Make plots
     sns.lineplot(x = list(f1_dict.keys()), y = list(f1_dict.values())) # f1-score plot
-    sns.barplott(x = list(f1_dict.keys()), y = list(f1_dict.values())) # bars per ts
+    sns.barplot(x = list(ts_counts.keys()), y = list(ts_counts.values())) # bars per ts
+    plt.title(f'TS illicit f1-score for {model_name}')
+    plt.show()
+    
     
 if __name__ == "__main__":
     
@@ -169,6 +177,9 @@ if __name__ == "__main__":
         evaluate(fit_model
                  ,Y_test
                  ,Y_pred)
+        
+        plot_ts_f1(model,df_processed,Y_test,Y_pred)
+        
         
 """
 
