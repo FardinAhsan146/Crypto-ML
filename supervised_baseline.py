@@ -8,7 +8,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
 
 """
 WARNING: If you just downloaded the Elliptic dataset and placed it in the data directory
@@ -97,7 +96,7 @@ def train(model,train_input,train_output,test_input,predict = False):
   
     return fitted_model
     
-def evaluate(model,test_output,predicted_output,plot = False):
+def evaluate(model,test_output,predicted_output):
     """
     Print out simple classification report for now
     Will add more functionality later
@@ -110,10 +109,26 @@ def evaluate(model,test_output,predicted_output,plot = False):
     
     print("\n")
     
-    if plot:
-        pass
-        
-        
+def plot_ts_f1(unp_df,test_output,predicted_output):
+    """
+    pots f1-score per timestep
+    
+    """
+    # create a time stamp df
+    df_ts = pd.concat([unp_df['time_step'],test_output], axis = 1).dropna()
+    df_ts['is_illicit_pred'] = predicted_output
+    
+    # Seperate dfs by time steps
+    ts_dict = dict()
+    
+    for ts in df_ts['time_step'].unique():
+        ts_dict[ts] = df_ts.loc[df_tos['time_step'] == ts]
+     
+    # Pull out f1 scores
+    f1_dict = dict()
+    
+    
+    
     
 if __name__ == "__main__":
     
@@ -126,7 +141,6 @@ if __name__ == "__main__":
     X_train, X_test, Y_train, Y_test = temporal_test_split(df)
     
     models = [RandomForestClassifier()
-             ,DecisionTreeClassifier()
              ,xgb.XGBClassifier()]
     
     for model in models:
