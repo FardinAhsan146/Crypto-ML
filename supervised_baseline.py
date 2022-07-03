@@ -109,11 +109,14 @@ def evaluate(model,test_output,predicted_output):
     
     print("\n")
     
-def plot_ts_f1(unp_df,test_output,predicted_output):
+def plot_ts_f1(model,unp_df,test_output,predicted_output):
     """
-    pots f1-score per timestep
+    plots illicit f1-score per timestep
+    All papers on this topic have a plot like this
     
     """
+    model_name = re.findall(r'(?<=\.)[a-zA-Z]+(?=\')',str(model.__class__))[0]
+    
     # create a time stamp df
     df_ts = pd.concat([unp_df['time_step'],test_output], axis = 1).dropna()
     df_ts['is_illicit_pred'] = predicted_output
@@ -121,14 +124,27 @@ def plot_ts_f1(unp_df,test_output,predicted_output):
     # Seperate dfs by time steps
     ts_dict = dict()
     
+    # Find rwos of df per time step
+    ts_counts = {ts:df.shape[0] for ts,df in ts_dict.items()}
+    
     for ts in df_ts['time_step'].unique():
         ts_dict[ts] = df_ts.loc[df_tos['time_step'] == ts]
      
     # Pull out f1 scores
     f1_dict = dict()
     
-    
-    
+    for ts,df in ts_dict.items():
+        
+        # compute illicit f1-score per timestamp
+        report_dict = classification_report(df['is_illicit'],df['is_illicit_pred'], output_dict = True)
+        f1score = report_dict['1.0']['f1-score']
+        
+        # Add to dict
+        f1_dict[ts] = f1score
+        
+    # Make plots
+    sns.lineplot(x = list(f1_dict.keys()), y = list(f1_dict.values())) # f1-score plot
+    sns.barplott(x = list(f1_dict.keys()), y = list(f1_dict.values())) # bars per ts
     
 if __name__ == "__main__":
     
