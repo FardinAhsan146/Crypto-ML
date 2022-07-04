@@ -31,8 +31,8 @@ def read_data():
     Read the two csvs (classes and features)
     Edges will not be used for non graph based models
     """
-    df_classes = pd.read_csv("data/elliptic_txs_classes.csv")
-    df_features = pd.read_csv("data/elliptic_txs_features.csv")
+    df_classes = pd.read_csv("../data/elliptic_txs_classes.csv")
+    df_features = pd.read_csv("../data/elliptic_txs_features.csv")
     
     return df_classes,df_features
     
@@ -61,7 +61,7 @@ def feature_engineer(node_classes, save = False):
     transformed_df = pd.DataFrame(transformed,columns = node_classes.columns, index = node_classes.index)
     
     if save:
-        transformed_df.to_csv('data/normalized.csv', index = False)
+        transformed_df.to_csv('../data/normalized.csv', index = False)
     
     return transformed_df
     
@@ -149,7 +149,6 @@ def plot_ts_f1(model,unp_df,test_output,predicted_output):
         
     # Make plots
     sns.lineplot(x = list(f1_dict.keys()), y = list(f1_dict.values())) # f1-score plot
-    sns.barplot(x = list(ts_counts.keys()), y = list(ts_counts.values())) # bars per ts
     plt.title(f'TS illicit f1-score for {model_name}')
     plt.show()
     
@@ -160,7 +159,7 @@ if __name__ == "__main__":
 
     df_processed = preprocess_data(df_classes,df_features)
     
-    df = feature_engineer(df_processed, save = True)
+    df = feature_engineer(df_processed, save = False)
     
     X_train, X_test, Y_train, Y_test = temporal_test_split(df)
     
