@@ -1,6 +1,7 @@
-
+from sklearn.ensemble import RandomForestClassifier
 from imblearn.under_sampling import RandomUnderSampler 
 from imblearn.over_sampling import RandomOverSampler
+from imblearn.combine import SMOTEENN 
 
 import supervised_baseline as util # src/supervised_baseline.py used for utils
 
@@ -11,32 +12,19 @@ illicit f1 on elliptic dataset with RandomForest baseline
 Aim is to find out if over/under sampling is even worth it. 
 """
 
-def random_undersample(df,output_class = 'is_ellicit'):
+def split_and_sample(sampler_class,df,output_col = 'is_ellicit'):
     """
-    Undersample majority class 
-    to same freq as mincority class
-
-    """
+    sampler_class: CLass -> Sampler class pass by name
     
+    Splits into input and output and returns samples dfs
+    """
+    X = df.loc[:,df.columns != output_col]
+    Y = df[output_col]
     
-    rus = RandomUnderSampler(random_state=42)
-    return rus.fit_resample()
-
-def random_oversample(df,output_class = 'is_ellicit'):
-    """
-    oversample minority class
-    to same size as majority class
-
-    """
-    pass 
-
-def dynamicsample(df,output_class = 'is_ellicit'):
-    """
-    Apply some sort of sampling technique
-    to over+under sample a dataset
-    """
-    pass 
-
+    rus = sampler_class(random_state = 42)
+    X_ret,Y_ret = rus.fit_resample(X,y)
+    
+    return X_ret,Y_ret
 
 if __name__ == '__main__':
     
@@ -45,13 +33,52 @@ if __name__ == '__main__':
         
     # Will train models with over sampled and under sampled data
     # But test with original temporal split
-    _, X_test, _, Y_test = util.temporal_test_split(df)
+    X_train_ns, X_test, Y_train_ns, Y_test = util.temporal_test_split(df)
+    
+    # sampler classes dict
+    samplers = {'RUS':RandomUnderSampler
+               ,'ROS':RandomOverSampler
+               ,'SMOTEEEN':SMOTEENN }
+
+    # Test and train splits by sampling strat
+    sampler_splits = dict()
+    
+    for strat_name,strat_class in samplers.items():
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     
-    # oversample df
-    # df_os = oversample(df)
-    
-    # undersampled
-    # df_us = undersample(df)
-    
-    
+
