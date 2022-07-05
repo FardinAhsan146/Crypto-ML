@@ -82,7 +82,11 @@ def temporal_test_split(node_classes):
     return X_train, X_test, Y_train, Y_test
 
     
-def train(model,train_input,train_output,test_input,predict = False):
+def train(train_input
+          ,train_output
+          ,test_input
+          ,predict = True
+          , model = RandomForestClassifier()):
     """
     Pass in a model object
     Use default hyperparameters
@@ -98,31 +102,32 @@ def train(model,train_input,train_output,test_input,predict = False):
   
     return fitted_model
     
-def evaluate(model = RandomForestClassifier(),test_output,predicted_output,f1_only = False):
+def evaluate(test_output
+             ,predicted_output
+             ,f1_only = False
+             ,model = RandomForestClassifier()):
     """
     Print out simple classification report for now
     Will add more functionality later
     
     """
-    model_name = re.findall(r'(?<=\.)[a-zA-Z]+(?=\')',str(model.__class__))[0]
-    print(f'Printing classification report for {model_name} \n')
-    
-    print(classification_report(test_output,predicted_output))
-    
-    print("\n")
-    
     if f1_only:
         
         # compute illicit f1-score per timestamp
-        report_dict = classification_report(df['is_illicit'],
-                                            df['is_illicit_pred'],
+        report_dict = classification_report(test_output,
+                                            predicted_output,
                                             output_dict = True,
                                             zero_division = 0)
-        f1score = report_dict['1.0']['f1-score']
         
+        return report_dict['1.0']['f1-score']
+    
+    else:
+        model_name = re.findall(r'(?<=\.)[a-zA-Z]+(?=\')',str(model.__class__))[0]
+        print(f'Printing classification report for {model_name} \n')
         
+        print(classification_report(test_output,predicted_output))
         
-        print(f'Illicit f1 score for {model_name} = {illicit_f1}\n')
+        print("\n")
     
 def plot_ts_f1(model,unp_df,test_output,predicted_output):
     """
@@ -143,7 +148,7 @@ def plot_ts_f1(model,unp_df,test_output,predicted_output):
         ts_dict[ts] = df_ts.loc[df_ts['time_step'] == ts]
         
     # Find rwos of df per time step
-    ts_counts = {ts:df.shape[0] for ts,df in ts_dict.items()}
+    # ts_counts = {ts:df.shape[0] for ts,df in ts_dict.items()}
      
     # Pull out f1 scores
     f1_dict = dict()
@@ -180,15 +185,14 @@ if __name__ == "__main__":
              ,xgb.XGBClassifier()]
     
     for model_class in models:
-        fit_model,Y_pred = train( model = model_class
-                                 ,X_train
+        fit_model,Y_pred = train(X_train
                                  ,Y_train
                                  ,X_test
-                                 ,predict = True)
+                                 ,model = model_class)
         
-        evaluate(fit_model
-                 ,Y_test
-                 ,Y_pred)
+        evaluate(Y_test
+                ,Y_pred
+                ,model = model_class)
         
         plot_ts_f1(model_class,df_processed,Y_test,Y_pred)
         
