@@ -12,15 +12,12 @@ illicit f1 on elliptic dataset with RandomForest baseline
 Aim is to find out if over/under sampling is even worth it. 
 """
 
-def split_and_sample(sampler_class,df,output_col = 'is_ellicit'):
+def split_and_sample(sampler_class,X,y,output_col = 'is_ellicit'):
     """
     sampler_class: CLass -> Sampler class pass by name
     
-    Splits into input and output and returns samples dfs
     """
-    X = df.loc[:,df.columns != output_col]
-    Y = df[output_col]
-    
+
     rus = sampler_class(random_state = 42)
     X_ret,Y_ret = rus.fit_resample(X,y)
     
@@ -44,11 +41,25 @@ if __name__ == '__main__':
     sampler_splits = dict()
     
     for strat_name,strat_class in samplers.items():
+        X_train_s,Y_train_s = split_and_sample(strat_class,X_train_ns,Y_train_ns)      
+        sampler_splits[strat_name] = (X_train_s,Y_train_s)
+
+    # print sizes
+    print(f'Unsampled df is {df.shape[0]} rows')
+    for strat_name,df_tup in sampler_splits.items():
+        print(f'{strat_name} df in {df_tup[0].shape[0]} rows')
         
-
-
-
-
+    #train RF on different sampling scores and save predictions 
+    samplers_preds = dict()
+    for name,df in sampler_splits.items(): 
+        train_sampled,test_sampled = df 
+        _, Y_pred = util.train(train,
+                               test,
+                               X_test,
+                               predict = False)
+    
+        
+    
 
 
 

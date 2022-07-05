@@ -98,7 +98,7 @@ def train(model,train_input,train_output,test_input,predict = False):
   
     return fitted_model
     
-def evaluate(model,test_output,predicted_output):
+def evaluate(model = RandomForestClassifier(),test_output,predicted_output,f1_only = False):
     """
     Print out simple classification report for now
     Will add more functionality later
@@ -110,6 +110,19 @@ def evaluate(model,test_output,predicted_output):
     print(classification_report(test_output,predicted_output))
     
     print("\n")
+    
+    if f1_only:
+        
+        # compute illicit f1-score per timestamp
+        report_dict = classification_report(df['is_illicit'],
+                                            df['is_illicit_pred'],
+                                            output_dict = True,
+                                            zero_division = 0)
+        f1score = report_dict['1.0']['f1-score']
+        
+        
+        
+        print(f'Illicit f1 score for {model_name} = {illicit_f1}\n')
     
 def plot_ts_f1(model,unp_df,test_output,predicted_output):
     """
@@ -166,8 +179,8 @@ if __name__ == "__main__":
     models = [RandomForestClassifier()
              ,xgb.XGBClassifier()]
     
-    for model in models:
-        fit_model,Y_pred = train( model
+    for model_class in models:
+        fit_model,Y_pred = train( model = model_class
                                  ,X_train
                                  ,Y_train
                                  ,X_test
@@ -177,7 +190,7 @@ if __name__ == "__main__":
                  ,Y_test
                  ,Y_pred)
         
-        plot_ts_f1(model,df_processed,Y_test,Y_pred)
+        plot_ts_f1(model_class,df_processed,Y_test,Y_pred)
         
         
 """
