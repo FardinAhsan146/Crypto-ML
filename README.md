@@ -11,4 +11,4 @@
 5. WARNING: Sk-learn source code has been changed [as per](https://stackoverflow.com/questions/54267745/implementing-custom-loss-function-in-scikit-learn#58550132). Use a different virtual enviorment. 
 Custom Loss functions code/results [here](https://github.com/FardinAhsan146/Crypto-ML/blob/main/src/customloss_rf_test.py).  
 
-6. EvolveGCN) in src/EvolveGCN from [https://github.com/Rufaim/EvolveGCN](https://github.com/Rufaim/EvolveGCN).
+6. EvolveGCN in src/EvolveGCN from [https://github.com/Rufaim/EvolveGCN](https://github.com/Rufaim/EvolveGCN).
