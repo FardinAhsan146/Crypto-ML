@@ -1,4 +1,3 @@
-from sklearn.ensemble import RandomForestClassifier
 from imblearn.under_sampling import RandomUnderSampler 
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.combine import SMOTEENN 
