@@ -7,7 +7,7 @@ from models.layers import EGCUH, HGRUCell, SummarizeLayer, GCNLayer
 
 
 
-DATADIR = "elliptic_bitcoin_dataset"
+DATADIR = "../../data_raw"
 FILTER_UNKNOWN = False
 ONLY_LOCAL_FEATURE = False
 CLASS_WEIGTHS = [0.7,0.29,0.01]
@@ -88,3 +88,8 @@ for epoch in range(NUM_EPOCH):
         test_loss_metric.result().numpy(), test_accuracy_metric.result().numpy(),
         test_precision_metric.result().numpy(),test_recall_metric.result().numpy()
     ))
+
+#Save the model
+model.save('weights/evolve_default_train.h5')
+
+print(model.summary())
