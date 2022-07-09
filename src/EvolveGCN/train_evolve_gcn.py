@@ -89,7 +89,10 @@ for epoch in range(NUM_EPOCH):
         test_precision_metric.result().numpy(),test_recall_metric.result().numpy()
     ))
 
-#Save the model
-model.save('weights/evolve_default_train.h5')
-
-print(model.summary())
+#Save the model, change file name as per modifications
+try:
+    model.save('weights/evolve_default_train.h5', save_formate = 'tf')
+except Exception:
+    model.save_weights('weights/evolve_default_train.h5')
+finally:
+    print(model.summary())
