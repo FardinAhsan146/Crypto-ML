@@ -13,4 +13,4 @@ Custom Loss functions code/results [here](https://github.com/FardinAhsan146/Cryp
 
 6. EvolveGCN in src/EvolveGCN from [https://github.com/Rufaim/EvolveGCN](https://github.com/Rufaim/EvolveGCN).
 
-7. Continuing work with GAT on google collab. View here https://colab.research.google.com/drive/1AxxzJeLHg7PvmMfKgh8h87rtLX5kfAWI?authuser=1#scrollTo=sMpDFt2DTvFO
+7. Continuing work with GAT on google collab. View here https://colab.research.google.com/drive/1AxxzJeLHg7PvmMfKgh8h87rtLX5kfAWI?usp=sharing
