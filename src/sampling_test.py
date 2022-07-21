@@ -25,12 +25,10 @@ def split_and_sample(sampler_class,X,y,output_col = 'is_ellicit'):
 
 if __name__ == '__main__':
     
-    # use this as training data
-    df = pd.read_csv('../data/normalized.csv') 
         
     # Will train models with over sampled and under sampled data
     # But test with original temporal split
-    X_train_ns, X_test, Y_train_ns, Y_test = util.temporal_test_split(df)
+    X_train_ns, X_test, Y_train_ns, Y_test = load_splits()
     
     # sampler classes dict
     samplers = {'RUS':RandomUnderSampler

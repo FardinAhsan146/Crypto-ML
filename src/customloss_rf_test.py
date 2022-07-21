@@ -10,10 +10,7 @@ custom loss functions
 
 if __name__ == '__main__':
         
-
-    df = pd.read_csv('../data/normalized.csv')
-    
-    X_train, X_test, Y_train, Y_test = util.temporal_test_split(df)
+    X_train_ns, X_test, Y_train_ns, Y_test = load_splits()
     
     fit_model,Y_pred = util.train(X_train,Y_train,X_test, model = RandomForestClassifier())
         

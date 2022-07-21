@@ -52,19 +52,6 @@ def preprocess_data(classes,features):
     
     return df
 
-def feature_engineer(node_classes, save = False):
-    """
-    Going to apply standard normalization
-    """
-    # Normalize df
-    transformed = MinMaxScaler().fit_transform(node_classes.values)
-    transformed_df = pd.DataFrame(transformed,columns = node_classes.columns, index = node_classes.index)
-    
-    if save:
-        transformed_df.to_csv('../data/normalized.csv', index = False)
-    
-    return transformed_df
-    
 def temporal_test_split(node_classes):
     """
     Create a 70% temporal test train splot
@@ -81,7 +68,42 @@ def temporal_test_split(node_classes):
     
     return X_train, X_test, Y_train, Y_test
 
+
+def feature_engineer(X_train,X_test,Y_train,Y_test, save = False):
+    """
+    Going to apply standard normalization
+    """
+    splits = []
     
+    for split in (X_train,X_test):
+        # Normalize splits
+        transformed = MinMaxScaler().fit_transform(split.values)
+        transformed_df = pd.DataFrame(transformed,columns = split.columns, index = split.index)
+        splits.append(transformed_df)
+        
+    for split in (Y_train,Y_test):
+        # Normalize splits
+        transformed = MinMaxScaler().fit_transform(split.values.reshape(-1,1))
+        transformed_df = pd.Series(transformed.ravel(),name = 'is_illicit', index = split.index)
+        splits.append(transformed_df)
+        
+    if save:
+        for split in ('X_train','X_test','Y_train','Y_test'):
+            transformed_df.to_csv(f'../data/normalized_{split}.csv', index = False)
+    
+    return splits
+    
+def load_splits():
+    """
+    Load feature engineered splits
+
+    """
+    splits = []
+    for split in ('X_train','X_test','Y_train','Y_test'):
+        df = pd.read_csv(f'../data/normalized_{split}.csv')
+        split.append(df)
+    
+
 def train(train_input
           ,train_output
           ,test_input
@@ -177,9 +199,9 @@ if __name__ == "__main__":
 
     df_processed = preprocess_data(df_classes,df_features)
     
-    df = feature_engineer(df_processed, save = False)
+    X_train, X_test, Y_train, Y_test = temporal_test_split(df_processed)
     
-    X_train, X_test, Y_train, Y_test = temporal_test_split(df)
+    X_train, X_test, Y_train, Y_test = feature_engineer(X_train,X_test,Y_train,Y_test, save = True)
     
     models = [RandomForestClassifier()
              ,xgb.XGBClassifier()]
@@ -194,7 +216,7 @@ if __name__ == "__main__":
                 ,Y_pred
                 ,model = model_class)
         
-        plot_ts_f1(model_class,df_processed,Y_test,Y_pred)
+
         
         
 """

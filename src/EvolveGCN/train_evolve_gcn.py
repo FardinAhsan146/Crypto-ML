@@ -96,3 +96,19 @@ except Exception:
     model.save_weights('weights/evolve_default_train.h5')
 finally:
     print(model.summary())
+
+"""
+Model: "evolve_gcn"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+egcuh (EGCUH)                multiple                  24933
+_________________________________________________________________
+egcuh_1 (EGCUH)              multiple                  127
+=================================================================
+Total params: 25,060
+Trainable params: 25,060
+Non-trainable params: 0
+_________________________________________________________________
+None
+"""
