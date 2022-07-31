@@ -88,8 +88,8 @@ def feature_engineer(X_train,X_test,Y_train,Y_test, save = False):
         splits.append(transformed_df)
         
     if save:
-        for split in ('X_train','X_test','Y_train','Y_test'):
-            transformed_df.to_csv(f'../data/normalized_{split}.csv', index = False)
+        for split,split_name in zip(splits,('X_train','X_test','Y_train','Y_test')):
+            split.to_csv(f'../data/normalized_{split_name}.csv', index = False)
     
     return splits
     
@@ -101,8 +101,9 @@ def load_splits():
     splits = []
     for split in ('X_train','X_test','Y_train','Y_test'):
         df = pd.read_csv(f'../data/normalized_{split}.csv')
-        split.append(df)
-    
+        splits.append(df)
+        
+    return splits
 
 def train(train_input
           ,train_output
@@ -217,34 +218,28 @@ if __name__ == "__main__":
                 ,model = model_class)
         
 
-        
-        
 """
-
 Printing classification report for RandomForestClassifier 
 
               precision    recall  f1-score   support
 
-         0.0       0.98      1.00      0.99     13091
-         1.0       0.99      0.66      0.79       879
+         0.0       0.97      1.00      0.99     13091
+         1.0       0.99      0.59      0.74       879
 
-    accuracy                           0.98     13970
-   macro avg       0.98      0.83      0.89     13970
-weighted avg       0.98      0.98      0.98     13970
+    accuracy                           0.97     13970
+   macro avg       0.98      0.80      0.86     13970
+weighted avg       0.97      0.97      0.97     13970
 
 
 
-Printing classification report for DecisionTreeClassifier 
+Printing classification report for XGBClassifier 
 
               precision    recall  f1-score   support
 
-         0.0       0.98      0.96      0.97     13091
-         1.0       0.54      0.67      0.60       879
+         0.0       0.97      1.00      0.99     13091
+         1.0       0.99      0.57      0.72       879
 
-    accuracy                           0.94     13970
-   macro avg       0.76      0.82      0.78     13970
-weighted avg       0.95      0.94      0.95     13970
-
-
+    accuracy                           0.97     13970
+   macro avg       0.98      0.78      0.85     13970
+weighted avg       0.97      0.97      0.97     13970
 """
-    
